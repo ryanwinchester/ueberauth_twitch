@@ -15,7 +15,7 @@ defmodule Ueberauth.Strategy.Twitch.OAuth do
     headers: [{"Content-Type", "application/x-www-form-urlencoded"}],
     site: "https://api.twitch.tv",
     strategy: __MODULE__,
-    token_url: "https://id.twitch.tv/oauth2/token",
+    token_url: "https://id.twitch.tv/oauth2/token"
   ]
 
   @doc false
@@ -68,16 +68,20 @@ defmodule Ueberauth.Strategy.Twitch.OAuth do
   end
 
   def get(token, url, headers \\ [], opts \\ []) do
-    client([token: token])
+    client(token: token)
     |> OAuth2.Client.get(url, headers, opts)
   end
 
   def get_token!(params \\ [], opts \\ []) do
     IO.inspect("redirect_uri")
     IO.inspect(opts[:redirect_uri])
-    client = opts
-    |> signed_client
-    client = %{ client | client_secret: opts[:client_secret], redirect_uri: opts[:redirect_uri] }
+
+    client =
+      opts
+      |> signed_client
+
+    client = %{client | client_secret: opts[:client_secret], redirect_uri: opts[:redirect_uri]}
+
     client
     |> put_param("client_secret", opts[:client_secret])
     |> OAuth2.Client.get_token!(params)
